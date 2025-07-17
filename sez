@@ -14,37 +14,10 @@ frame.Position = UDim2.new(0.5, -130, 0.5, -80)
 frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 frame.BorderSizePixel = 0
 frame.Active = true
-frame.Selectable = true
-frame.Draggable = false -- manual drag
 
--- Manual Draggable Logic
-local dragging, dragInput, dragStart, startPos = false
-
-frame.InputBegan:Connect(function(input)
-	if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-		dragging = true
-		dragStart = input.Position
-		startPos = frame.Position
-	end
-end)
-
-UIS.InputChanged:Connect(function(input)
-	if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
-		local delta = input.Position - dragStart
-		frame.Position = UDim2.new(
-			startPos.X.Scale,
-			startPos.X.Offset + delta.X,
-			startPos.Y.Scale,
-			startPos.Y.Offset + delta.Y
-		)
-	end
-end)
-
-UIS.InputEnded:Connect(function(input)
-	if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-		dragging = false
-	end
-end)
+-- Rounded corners
+local corner = Instance.new("UICorner", frame)
+corner.CornerRadius = UDim.new(0, 10)
 
 -- GUI Components
 local title = Instance.new("TextLabel", frame)
@@ -72,6 +45,9 @@ button.Text = "🔥 Level Up 50+ Instantly"
 button.TextColor3 = Color3.new(1, 1, 1)
 button.Font = Enum.Font.SourceSansBold
 button.TextSize = 16
+
+local roundBtn = Instance.new("UICorner", button)
+roundBtn.CornerRadius = UDim.new(0, 6)
 
 local petInfo = Instance.new("TextLabel", frame)
 petInfo.Size = UDim2.new(1, 0, 0, 30)
@@ -103,6 +79,38 @@ popup.TextSize = 20
 popup.Visible = false
 popup.BorderSizePixel = 0
 popup.TextWrapped = true
+
+local roundPopup = Instance.new("UICorner", popup)
+roundPopup.CornerRadius = UDim.new(0, 8)
+
+-- Manual Draggable Logic via title
+local dragging, dragInput, dragStart, startPos = false
+
+title.InputBegan:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 then
+		dragging = true
+		dragStart = input.Position
+		startPos = frame.Position
+	end
+end)
+
+title.InputEnded:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 then
+		dragging = false
+	end
+end)
+
+title.InputChanged:Connect(function(input)
+	if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+		local delta = input.Position - dragStart
+		frame.Position = UDim2.new(
+			startPos.X.Scale,
+			startPos.X.Offset + delta.X,
+			startPos.Y.Scale,
+			startPos.Y.Offset + delta.Y
+		)
+	end
+end)
 
 -- Held Tool Finder
 local function getHeldTool()
